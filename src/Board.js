@@ -79,11 +79,32 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      return false; // fixme
+      // console.log('this is rowIndex', rowIndex);
+      // console.log('this.rows()', this.rows());
+      var row = this.rows()[rowIndex];
+      // console.log('row', row);
+      // console.log('rowindex', rowIndex);
+
+      var total = 0;
+      for (var i = 0; i < row.length; i++) {
+        total += row[i];
+      }
+      if (total > 1) {
+        return true;
+      } else {
+        return false; // fixme
+      }
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
+      var matrix = this.rows();
+
+      for (var i = 0; i < matrix.length; i++) {
+        if (this.hasRowConflictAt(i)) {
+          return true;
+        }
+      }
       return false; // fixme
     },
 
@@ -94,11 +115,29 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      return false; // fixme
+      
+      var matrix = this.rows();
+      var total = 0;
+
+      for (let i = 0; i < matrix.length; i++) {
+        total += matrix[i][colIndex];
+      }
+
+      return (total > 1) ? true : false;
+
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
+
+      var matrix = this.rows();
+
+      for (var i = 0; i < matrix.length; i++) {
+        if (this.hasColConflictAt(i)) {
+          return true;
+        }
+      }
+
       return false; // fixme
     },
 
@@ -109,11 +148,36 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      
+      var matrix = this.rows();
+      var total = 0;
+      var rowIndex = 0;
+      for (var columnIndex = majorDiagonalColumnIndexAtFirstRow; 
+        (columnIndex < matrix.length - 1) && (rowIndex < matrix.length);
+        columnIndex++) {
+
+        //note negatives
+        // add to total the value at position matrix.[rowIndex][columnIndex]
+        if (columnIndex >= 0) {
+          //make sure we do not attempt to enter matrix[4] DNE
+          if (matrix[rowIndex] !== undefined) {
+            total += matrix[rowIndex][columnIndex];
+          }
+        } rowIndex++;
+      }
+      
+      return (total > 1);
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
+      var matrix = this.rows();
+
+      for (var i = -(matrix.length - 2); i < matrix.length - 1; i++) {
+        if (this.hasMajorDiagonalConflictAt(i)) {
+          return true;
+        }
+      }
       return false; // fixme
     },
 
