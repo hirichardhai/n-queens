@@ -143,7 +143,7 @@
       var rowIndex = 0;
 
       for (var columnIndex = majorDiagonalColumnIndexAtFirstRow; 
-        (columnIndex < matrix.length - 1) && (rowIndex < matrix.length);
+        (columnIndex < matrix.length) && (rowIndex < matrix.length);
         columnIndex++) {
         if (columnIndex >= 0) {
           //make sure we do not attempt to enter matrix[4] DNE

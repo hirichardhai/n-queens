@@ -41,7 +41,7 @@ window.countNRooksSolutions = function(n) {
   // }
 
   var innerRecursive = function(board, rowInsertedAt, columnInsertedAt) {
-    //check if current row/column === 1
+    //check if current row/column === 1`
     if (!(board.hasAnyRowConflicts() || board.hasAnyColConflicts() )) {
 
       if (rowInsertedAt === n - 1) {
@@ -59,34 +59,51 @@ window.countNRooksSolutions = function(n) {
       }
     }
   };
-
+debugger;
   innerRecursive(board, -1, 0);
-
-  /*
-    innerRecursive function (state of the matrix, columnInsertedAt) {
-      add a new rook to the matrix at (next row, columnInsertedAt)    
-      check the validity of the matrix
-
-      Base case:
-      check if we're at the bottom row
-        if yes and yes, solutionCount++
-
-      Recursive case:
-      iterate over the columns: for (i from 0 to n) {
-        call innerRecursive function with matrix, and the column where we're about to insert a rook
-          (* the next rook will be at (next row, column i) )
-      }
-
-    }
-  */
-  // call function
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = undefined; //fixme
+  var board = new Board({n: n});
+  var matrix = board.rows();
+  
+  // if (n === 2) {
+  //   debugger;
+  // }
+
+  var innerRecursive = function(board, rowInsertedAt, columnInsertedAt) {
+    //check if current row/column === 1
+    if (!(board.hasAnyQueensConflicts())) {
+
+      if (rowInsertedAt === n - 1) {
+        return board.rows();
+      } else {
+
+        for (var i = 0; i < n; i++) {
+          // make a new board
+          let newBoard = new Board( (board.rows()) .map( row => row.slice() ) );
+          let newMatrix = newBoard.rows();
+          newMatrix[rowInsertedAt + 1][i] = 1;
+
+          var answer = innerRecursive(newBoard, rowInsertedAt + 1, i);
+          
+          if (answer) {
+            return answer;
+          }
+        }
+      }
+    }
+    return false;
+  };
+
+  if (n === 2 || n === 3) {
+    var solution = (new Board({n: n})).rows();
+  } else {
+    var solution = innerRecursive(board, -1, 0);
+  }
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;
@@ -94,7 +111,44 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var solutionCount = 0;
+  var board = new Board({n: n});
+  var matrix = board.rows();
+
+
+  var innerRecursive = function(board, rowInsertedAt, columnInsertedAt) {
+    //check if current row/column === 1
+    // if (JSON.stringify(board.rows()) === '[[0,0,1,0],[0,1,0,0],[0,0,0,1],[1,0,0,0]]') {
+    //   debugger;
+    // }
+
+    // console.log(JSON.stringify(board.rows()));
+
+    if (!(board.hasAnyMinorDiagonalConflicts() || board.hasAnyMajorDiagonalConflicts() || board.hasAnyColConflicts() || board.hasAnyRowConflicts())) {
+
+      if (rowInsertedAt === n - 1) {
+        solutionCount++;
+        console.log('Solution: ' + JSON.stringify(board.rows()));
+      } else {
+
+        for (var i = 0; i < n; i++) {
+          // make a new board
+          let newBoard = new Board( (board.rows()) .map( row => row.slice() ) );
+          let newMatrix = newBoard.rows();
+          newMatrix[rowInsertedAt + 1][i] = 1;
+
+          innerRecursive(newBoard, rowInsertedAt + 1, i);
+        }
+      }
+    }
+  };
+
+  if (n === 2 || n === 3) {
+    var solutionCount = 0;
+  } else {
+    innerRecursive(board, -1, 0);
+  }
+
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
