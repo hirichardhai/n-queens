@@ -33,21 +33,41 @@ window.findNRooksSolution = function(n) {
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
   var solutionCount = 0;
-  var matrix = new Board(n);
+  var board = new Board({n: n});
+  var matrix = board.rows();
   
+  // if (n === 2) {
+  //   debugger;
+  // }
 
-  var innerRecursive = function(matrix, columnInserted) {
+  var innerRecursive = function(board, rowInsertedAt, columnInsertedAt) {
+    //check if current row/column === 1
+    if (!(board.hasAnyRowConflicts() || board.hasAnyColConflicts() )) {
 
-    
+      if (rowInsertedAt === n - 1) {
+        solutionCount++;
+      } else {
 
+        for (var i = 0; i < n; i++) {
+          // make a new board
+          let newBoard = new Board( (board.rows()) .map( row => row.slice() ) );
+          let newMatrix = newBoard.rows();
+          newMatrix[rowInsertedAt + 1][i] = 1;
 
+          innerRecursive(newBoard, rowInsertedAt + 1, i);
+        }
+      }
+    }
   };
+
+  innerRecursive(board, -1, 0);
+
   /*
-    innerRecursive function (state of the matrix, columnToInsert) {
-      add a new rook to the matrix at (next row, columnToInsert)    
+    innerRecursive function (state of the matrix, columnInsertedAt) {
+      add a new rook to the matrix at (next row, columnInsertedAt)    
+      check the validity of the matrix
 
       Base case:
-      check the validity of the matrix
       check if we're at the bottom row
         if yes and yes, solutionCount++
 
