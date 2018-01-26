@@ -39,28 +39,50 @@ window.countNRooksSolutions = function(n) {
   // if (n === 2) {
   //   debugger;
   // }
+  // togglePiece: function(rowIndex, colIndex)
 
-  var innerRecursive = function(board, rowInsertedAt, columnInsertedAt) {
-    //check if current row/column === 1`
-    if (!(board.hasAnyRowConflicts() || board.hasAnyColConflicts() )) {
+  //FUNCTION to check if current slot is a valid input
+  var isValid = function (row, column) {
 
-      if (rowInsertedAt === n - 1) {
+    board.togglePiece(row, column);
+    let toReturn = !board.hasAnyRooksConflicts();
+    board.togglePiece(row, column);
+
+    return toReturn;
+  };
+
+  var recursive = function (row, column) {
+    if ( isValid(row, column) ) {
+      // if at last row
+      if (row === n - 1) {
+
         solutionCount++;
       } else {
+        for (let i = 0; i < n; i++) {
+          // toggle ON
+          board.togglePiece(row, column);
+          // do recursive(row+1, i)
+          recursive(row + 1, i);
+          // toggle OFF
+          board.togglePiece(row, column);
 
-        for (var i = 0; i < n; i++) {
-          // make a new board
-          let newBoard = new Board( (board.rows()) .map( row => row.slice() ) );
-          let newMatrix = newBoard.rows();
-          newMatrix[rowInsertedAt + 1][i] = 1;
-
-          innerRecursive(newBoard, rowInsertedAt + 1, i);
         }
       }
     }
+
+    
   };
-debugger;
-  innerRecursive(board, -1, 0);
+
+  if ( n % 2 !== 0) {
+    for (var i = 0; i < n; i++) {
+      recursive(0, i);
+    }
+  } else {
+    for (var i = 0; i < n / 2; i++) {
+      recursive(0, i);
+    }
+    solutionCount *= 2;
+  }
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };
@@ -128,7 +150,6 @@ window.countNQueensSolutions = function(n) {
 
       if (rowInsertedAt === n - 1) {
         solutionCount++;
-        console.log('Solution: ' + JSON.stringify(board.rows()));
       } else {
 
         for (var i = 0; i < n; i++) {
